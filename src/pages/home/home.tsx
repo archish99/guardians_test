@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState } from "react";
 import {
   Box,
@@ -21,6 +22,8 @@ const Home: React.FC = () => {
     useState<hospitalType[]>(hospitalData);
   const [currentNameSortType, setCurrentNameSortType] = useState("");
   const [currentAddressSortType, setCurrentAddressSortType] = useState("");
+  const [currentAreaSortType, setCurrentAreaSortType] = useState("");
+  const [sortObj, setSortObj] = useState({});
 
   const randomiseArray = (arr: hospitalType[]) => {
     const shuffled = arr
@@ -29,6 +32,34 @@ const Home: React.FC = () => {
       .map(({ value }) => value);
 
     return shuffled;
+  };
+
+  const sortByProperty = (
+    prop: keyof hospitalType,
+    updateStateFunc: (val: string) => void,
+    sortState: string
+  ) => {
+    let sortedData;
+    const isItemPresent = sortState[prop];
+
+    if (!isItemPresent) {
+      setSortObj({ ...sortState, [prop]: "asc" });
+      sortedData = modifiedData.sort((a, b) =>
+        a[prop] > b[prop] ? 1 : b[prop] > a[prop] ? -1 : 0
+      );
+      setModifiedData(sortedData);
+    } else {
+      if (sortState[prop] === "asc") {
+        sortedData = modifiedData.sort((a, b) =>
+          a[prop] < b[prop] ? 1 : b[prop] < a[prop] ? -1 : 0
+        );
+        setSortObj({ ...sortState, [prop]: "dsc" });
+        setModifiedData(sortedData);
+      } else if (sortState[prop] === "dsc") {
+        setSortObj({ ...sortState, [prop]: "" });
+        setModifiedData(randomiseArray(hospitalData));
+      }
+    }
   };
 
   const sortTableByProperty = (prop: keyof hospitalType) => {
@@ -99,62 +130,35 @@ const Home: React.FC = () => {
         <Table>
           <Thead>
             <Tr>
-              <Th>
-                <HStack alignItems="center">
-                  <Text
-                    cursor="pointer"
-                    mr="3"
-                    onClick={() => sortTableByProperty("Name")}
-                  >
-                    Name
-                  </Text>
-                  <Input
-                    type="text"
-                    w="60%"
-                    placeholder="Filter By Name..."
-                    onChange={(e) => filterData(e.target.value, "Name")}
-                  />
-                  {currentNameSortType && (
-                    <Icon
-                      as={
-                        currentNameSortType === "asc"
-                          ? AiFillCaretUp
-                          : AiFillCaretDown
-                      }
-                      color="#7D8492"
+              {Object.keys(hospitalData[0]).map((item) => (
+                <Th>
+                  <HStack alignItems="center">
+                    <Text
+                      cursor="pointer"
+                      mr="3"
+                      onClick={() => sortByProperty(item, setSortObj, sortObj)}
+                    >
+                      {item}
+                    </Text>
+                    <Input
+                      type="text"
+                      w="60%"
+                      placeholder="Filter By Name..."
+                      onChange={(e) => filterData(e.target.value, "Name")}
                     />
-                  )}
-                </HStack>
-              </Th>
-              <Th>Area</Th>
-              <Th>
-                <HStack alignItems="center">
-                  <Text
-                    cursor="pointer"
-                    mr="3"
-                    onClick={() => sortTableByProperty("Address")}
-                  >
-                    Address
-                  </Text>
-                  <Input
-                    type="text"
-                    w="60%"
-                    placeholder="Filter By Address..."
-                    onChange={(e) => filterData(e.target.value, "Address")}
-                  />
-                  {currentAddressSortType && (
-                    <Icon
-                      as={
-                        currentAddressSortType === "asc"
-                          ? AiFillCaretUp
-                          : AiFillCaretDown
-                      }
-                      color="#7D8492"
-                    />
-                  )}
-                </HStack>
-              </Th>
-              <Th>Type</Th>
+                    {currentNameSortType && (
+                      <Icon
+                        as={
+                          currentNameSortType === "asc"
+                            ? AiFillCaretUp
+                            : AiFillCaretDown
+                        }
+                        color="#7D8492"
+                      />
+                    )}
+                  </HStack>
+                </Th>
+              ))}
             </Tr>
           </Thead>
           <Tbody>

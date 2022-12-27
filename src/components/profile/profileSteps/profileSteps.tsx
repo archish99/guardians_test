@@ -21,10 +21,13 @@ const ProfileSteps: React.FC<Props> = ({ setUserProfileCompleted }) => {
       content: <ProfileStep1 setStep={setStep} />,
     },
     {
-      label: "Medical Information",
-      content: <ProfileStep2 setStep={setStep} />,
+      label: "Emergency Contact",
+      content: <ProfileStep3 setStep={nextStep} />,
     },
-    { label: "Emergency Contact", content: <ProfileStep3 setStep={setStep} /> },
+    {
+      label: "Medical Information",
+      content: <ProfileStep2 setStep={nextStep} />,
+    },
     {
       label: "Information Check",
       content: <ProfileStep4 nextStep={nextStep} />,

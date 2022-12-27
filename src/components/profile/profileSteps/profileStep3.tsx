@@ -12,7 +12,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 interface Props {
-  setStep: (step: number) => void;
+  setStep: () => void;
 }
 
 const ProfileStep3: React.FC<Props> = ({ setStep }) => {
@@ -27,7 +27,7 @@ const ProfileStep3: React.FC<Props> = ({ setStep }) => {
     }),
     onSubmit: (values) => {
       localStorage.setItem("emergencyContactInfo", JSON.stringify(values));
-      setStep(3);
+      setStep();
     },
   });
 
@@ -35,7 +35,7 @@ const ProfileStep3: React.FC<Props> = ({ setStep }) => {
 
   useEffect(() => {
     if (localStorage.getItem("emergencyContactInfo")) {
-      setStep(3);
+      setStep();
     }
   }, []);
 
